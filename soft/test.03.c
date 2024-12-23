@@ -78,7 +78,7 @@ void play() {
 
 void show_ball(int pos) {
     lcd_clear_vbuf();
-    lcd_putc(3, pos, '*');
+    lcd_putc(3, pos, 'o');
 }
 
 /*

@@ -35,6 +35,9 @@ struct player {
     int racket_size;
 };
 
+struct player player1, player2;
+struct ball ball;
+
 int state = INIT, pos = 0;
 
 /* interrupt_handler() is called every 100msec */
@@ -89,6 +92,31 @@ void play() {
             led_blink();          /* Stop the game */
         }
     }
+}
+
+int is_hit() {
+    /*address of rte switch*/
+    volatile int *rte_ptr;
+    struct player p;
+    int swing;
+    if (ball.pos_x == 0) {
+        rte_ptr = (int *)0xff10;
+        p = player1;
+        swing = (*rte_ptr) & 0x1;
+    } else if (ball.pos_x == 95) {
+	    rte_ptr = (int *)0xff14;
+        p = player2;
+        swing = (*rte_ptr) & 0x1;
+    } else {
+        swing = 0;
+    }
+    
+    int racket_top = p.racket_y_center + p.racket_size/2; 
+    int racket_down = p.racket_y_center - p.racket_size/2;
+    if (swing && ball.pos_y >= racket_down && ball.pos_y <= racket_top)
+        return 1;
+    else
+        return 0;
 }
 
 void show_ball(int pos) {
