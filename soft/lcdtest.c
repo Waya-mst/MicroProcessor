@@ -23,6 +23,11 @@ void main() {
             state = OPENING; 
         } else if (state == OPENING) {
             state = PLAY;
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
+                    lcd_vbuf[i][j] = {}
+                }
+            }
         } else if (state == PLAY) {
             state = PLAY;
         } else if (state == ENDING) {
