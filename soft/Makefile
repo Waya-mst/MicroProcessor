@@ -1,4 +1,4 @@
-SOURCE = test.03.c
+SOURCE = test.c
 
 OS = $(shell lsb_release -si)
 ifeq ($(OS), Ubuntu)
