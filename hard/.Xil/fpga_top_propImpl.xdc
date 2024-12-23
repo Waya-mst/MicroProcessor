@@ -1,4 +1,4 @@
-set_property SRC_FILE_INFO {cfile:/home/md203/ub870149/workspace/MicroProcess/mips-20240724/hard/test1.srcs/sources_1/imports/fpga.xdc rfile:../test1.srcs/sources_1/imports/fpga.xdc id:1} [current_design]
+set_property SRC_FILE_INFO {cfile:/home/md302/ub609782/micro/MicroProcessor/hard/test1.srcs/sources_1/imports/fpga.xdc rfile:../test1.srcs/sources_1/imports/fpga.xdc id:1} [current_design]
 set_property src_info {type:XDC file:1 line:2 export:INPUT save:INPUT read:READ} [current_design]
 set_property PACKAGE_PIN L16 [get_ports clk_125mhz]
 set_property src_info {type:XDC file:1 line:7 export:INPUT save:INPUT read:READ} [current_design]
