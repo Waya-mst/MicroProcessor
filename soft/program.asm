@@ -1000,9 +1000,9 @@ font8x8:
 	.byte	-86
 	.byte	85
 
-	.comm	player1,24,4
+	.comm	player1,28,4
 
-	.comm	player2,24,4
+	.comm	player2,28,4
 
 	.comm	ball,16,4
 	.globl	state
@@ -1054,6 +1054,9 @@ interrupt_handler:
 	nop
 
 	jal	update_ball_pos
+	nop
+
+	jal	update_racket_pos
 	nop
 
 	jal	update_window
@@ -1113,6 +1116,55 @@ $L17:
 	addiu	$2,$2,%lo(ball)
 	li	$3,5			# 0x5
 	sw	$3,12($2)
+	lui	$2,%hi(player1)
+	sw	$0,%lo(player1)($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	li	$3,32			# 0x20
+	sw	$3,4($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	sw	$0,8($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	sw	$0,12($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	li	$3,1			# 0x1
+	sw	$3,16($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	li	$3,9			# 0x9
+	sw	$3,20($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	li	$3,8			# 0x8
+	sw	$3,24($2)
+	lui	$2,%hi(player2)
+	sw	$0,%lo(player2)($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	li	$3,32			# 0x20
+	sw	$3,4($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	li	$3,3			# 0x3
+	sw	$3,8($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	sw	$0,12($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	li	$3,1			# 0x1
+	sw	$3,16($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	li	$3,9			# 0x9
+	sw	$3,20($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	li	$3,8			# 0x8
+	sw	$3,24($2)
 	jal	lcd_init
 	nop
 
@@ -1237,13 +1289,13 @@ $L20:
 	.ent	is_hit
 	.type	is_hit, @function
 is_hit:
-	.frame	$fp,48,$31		# vars= 40, regs= 1/0, args= 0, gp= 0
+	.frame	$fp,56,$31		# vars= 48, regs= 1/0, args= 0, gp= 0
 	.mask	0x40000000,-4
 	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-48
-	sw	$fp,44($sp)
+	addiu	$sp,$sp,-56
+	sw	$fp,52($sp)
 	move	$fp,$sp
 	lui	$2,%hi(ball)
 	lw	$3,%lo(ball)($2)
@@ -1262,23 +1314,26 @@ is_hit:
 	li	$2,65296			# 0xff10
 	sw	$2,4($fp)
 	lui	$2,%hi(player1)
-	lw	$7,%lo(player1)($2)
+	lw	$8,%lo(player1)($2)
 	addiu	$3,$2,%lo(player1)
-	lw	$6,4($3)
+	lw	$7,4($3)
 	addiu	$3,$2,%lo(player1)
-	lw	$5,8($3)
+	lw	$6,8($3)
 	addiu	$3,$2,%lo(player1)
-	lw	$4,12($3)
+	lw	$5,12($3)
 	addiu	$3,$2,%lo(player1)
-	lw	$3,16($3)
+	lw	$4,16($3)
+	addiu	$3,$2,%lo(player1)
+	lw	$3,20($3)
 	addiu	$2,$2,%lo(player1)
-	lw	$2,20($2)
-	sw	$7,16($fp)
-	sw	$6,20($fp)
-	sw	$5,24($fp)
-	sw	$4,28($fp)
-	sw	$3,32($fp)
-	sw	$2,36($fp)
+	lw	$2,24($2)
+	sw	$8,16($fp)
+	sw	$7,20($fp)
+	sw	$6,24($fp)
+	sw	$5,28($fp)
+	sw	$4,32($fp)
+	sw	$3,36($fp)
+	sw	$2,40($fp)
 	lw	$2,4($fp)
 	nop
 	lw	$2,0($2)
@@ -1306,23 +1361,26 @@ $L24:
 	li	$2,65300			# 0xff14
 	sw	$2,4($fp)
 	lui	$2,%hi(player2)
-	lw	$7,%lo(player2)($2)
+	lw	$8,%lo(player2)($2)
 	addiu	$3,$2,%lo(player2)
-	lw	$6,4($3)
+	lw	$7,4($3)
 	addiu	$3,$2,%lo(player2)
-	lw	$5,8($3)
+	lw	$6,8($3)
 	addiu	$3,$2,%lo(player2)
-	lw	$4,12($3)
+	lw	$5,12($3)
 	addiu	$3,$2,%lo(player2)
-	lw	$3,16($3)
+	lw	$4,16($3)
+	addiu	$3,$2,%lo(player2)
+	lw	$3,20($3)
 	addiu	$2,$2,%lo(player2)
-	lw	$2,20($2)
-	sw	$7,16($fp)
-	sw	$6,20($fp)
-	sw	$5,24($fp)
-	sw	$4,28($fp)
-	sw	$3,32($fp)
-	sw	$2,36($fp)
+	lw	$2,24($2)
+	sw	$8,16($fp)
+	sw	$7,20($fp)
+	sw	$6,24($fp)
+	sw	$5,28($fp)
+	sw	$4,32($fp)
+	sw	$3,36($fp)
+	sw	$2,40($fp)
 	lw	$2,4($fp)
 	nop
 	lw	$2,0($2)
@@ -1383,8 +1441,8 @@ $L27:
 	move	$2,$0
 $L29:
 	move	$sp,$fp
-	lw	$fp,44($sp)
-	addiu	$sp,$sp,48
+	lw	$fp,52($sp)
+	addiu	$sp,$sp,56
 	jr	$31
 	nop
 
@@ -1408,7 +1466,13 @@ update_window:
 	sw	$31,20($sp)
 	sw	$fp,16($sp)
 	move	$fp,$sp
+	jal	lcd_clear_vbuf
+	nop
+
 	jal	show_ball
+	nop
+
+	jal	show_racket
 	nop
 
 	nop
@@ -1439,9 +1503,6 @@ show_ball:
 	sw	$31,36($sp)
 	sw	$fp,32($sp)
 	move	$fp,$sp
-	jal	lcd_clear_vbuf
-	nop
-
 	lui	$2,%hi(ball)
 	addiu	$2,$2,%lo(ball)
 	lw	$2,12($2)
@@ -1537,6 +1598,164 @@ $L32:
 	.end	show_ball
 	.size	show_ball, .-show_ball
 	.align	2
+	.globl	show_racket
+	.set	nomips16
+	.set	nomicromips
+	.ent	show_racket
+	.type	show_racket, @function
+show_racket:
+	.frame	$fp,48,$31		# vars= 16, regs= 2/0, args= 24, gp= 0
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-48
+	sw	$31,44($sp)
+	sw	$fp,40($sp)
+	move	$fp,$sp
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$2,20($2)
+	nop
+	subu	$2,$0,$2
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	sw	$2,24($fp)
+	b	$L37
+	nop
+
+$L40:
+	sw	$0,28($fp)
+	b	$L38
+	nop
+
+$L39:
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$3,4($2)
+	lw	$2,24($fp)
+	nop
+	addu	$3,$3,$2
+	lw	$2,28($fp)
+	nop
+	addiu	$2,$2,90
+	sw	$0,16($sp)
+	li	$7,255			# 0xff
+	move	$6,$0
+	move	$5,$2
+	move	$4,$3
+	jal	lcd_set_vbuf_pixel
+	nop
+
+	lw	$2,28($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,28($fp)
+$L38:
+	lw	$2,28($fp)
+	nop
+	slt	$2,$2,2
+	bne	$2,$0,$L39
+	nop
+
+	lw	$2,24($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,24($fp)
+$L37:
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$2,20($2)
+	nop
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	slt	$2,$3,$2
+	beq	$2,$0,$L40
+	nop
+
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$2,20($2)
+	nop
+	subu	$2,$0,$2
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	sw	$2,32($fp)
+	b	$L41
+	nop
+
+$L44:
+	sw	$0,36($fp)
+	b	$L42
+	nop
+
+$L43:
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$3,4($2)
+	lw	$2,32($fp)
+	nop
+	addu	$3,$3,$2
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,5
+	sw	$0,16($sp)
+	li	$7,255			# 0xff
+	move	$6,$0
+	move	$5,$2
+	move	$4,$3
+	jal	lcd_set_vbuf_pixel
+	nop
+
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,36($fp)
+$L42:
+	lw	$2,36($fp)
+	nop
+	slt	$2,$2,2
+	bne	$2,$0,$L43
+	nop
+
+	lw	$2,32($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,32($fp)
+$L41:
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$2,20($2)
+	nop
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	move	$3,$2
+	lw	$2,32($fp)
+	nop
+	slt	$2,$3,$2
+	beq	$2,$0,$L44
+	nop
+
+	nop
+	move	$sp,$fp
+	lw	$31,44($sp)
+	lw	$fp,40($sp)
+	addiu	$sp,$sp,48
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	show_racket
+	.size	show_racket, .-show_racket
+	.align	2
 	.globl	update_racket_pos
 	.set	nomips16
 	.set	nomicromips
@@ -1561,7 +1780,7 @@ update_racket_pos:
 	nop
 	andi	$2,$2,0x2
 	sw	$2,8($fp)
-	lw	$2,0($fp)
+	lw	$2,4($fp)
 	nop
 	lw	$2,0($2)
 	nop
@@ -1571,18 +1790,28 @@ update_racket_pos:
 	nop
 	sra	$2,$2,1
 	sw	$2,8($fp)
+	lw	$2,8($fp)
+	nop
+	sltu	$2,$2,1
+	andi	$2,$2,0x00ff
+	sw	$2,8($fp)
 	lw	$2,12($fp)
 	nop
 	sra	$2,$2,1
 	sw	$2,12($fp)
 	lw	$2,8($fp)
 	nop
-	beq	$2,$0,$L37
+	beq	$2,$0,$L46
 	nop
 
 	lui	$2,%hi(player1)
 	addiu	$2,$2,%lo(player1)
 	lw	$3,4($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$2,24($2)
+	nop
+	addu	$3,$3,$2
 	lui	$2,%hi(player1)
 	addiu	$2,$2,%lo(player1)
 	lw	$2,20($2)
@@ -1592,21 +1821,24 @@ update_racket_pos:
 	sra	$2,$2,1
 	addu	$2,$3,$2
 	slt	$2,$2,63
-	beq	$2,$0,$L38
+	beq	$2,$0,$L47
 	nop
 
 	lui	$2,%hi(player1)
 	addiu	$2,$2,%lo(player1)
-	lw	$2,4($2)
+	lw	$3,4($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$2,24($2)
 	nop
-	addiu	$3,$2,8
+	addu	$3,$3,$2
 	lui	$2,%hi(player1)
 	addiu	$2,$2,%lo(player1)
 	sw	$3,4($2)
-	b	$L40
+	b	$L49
 	nop
 
-$L38:
+$L47:
 	lui	$2,%hi(player1)
 	addiu	$2,$2,%lo(player1)
 	lw	$2,20($2)
@@ -1619,122 +1851,148 @@ $L38:
 	lui	$2,%hi(player1)
 	addiu	$2,$2,%lo(player1)
 	sw	$3,4($2)
-	b	$L40
-	nop
-
-$L37:
-	lui	$2,%hi(player1)
-	addiu	$2,$2,%lo(player1)
-	lw	$3,4($2)
-	lui	$2,%hi(player1)
-	addiu	$2,$2,%lo(player1)
-	lw	$2,20($2)
-	nop
-	srl	$4,$2,31
-	addu	$2,$4,$2
-	sra	$2,$2,1
-	addu	$2,$3,$2
-	blez	$2,$L41
-	nop
-
-	lui	$2,%hi(player1)
-	addiu	$2,$2,%lo(player1)
-	lw	$2,4($2)
-	nop
-	addiu	$3,$2,-8
-	lui	$2,%hi(player1)
-	addiu	$2,$2,%lo(player1)
-	sw	$3,4($2)
-	b	$L40
-	nop
-
-$L41:
-	lui	$2,%hi(player1)
-	addiu	$2,$2,%lo(player1)
-	lw	$2,20($2)
-	nop
-	srl	$3,$2,31
-	addu	$2,$3,$2
-	sra	$2,$2,1
-	move	$3,$2
-	lui	$2,%hi(player1)
-	addiu	$2,$2,%lo(player1)
-	sw	$3,4($2)
-$L40:
-	lw	$2,12($fp)
-	nop
-	beq	$2,$0,$L42
-	nop
-
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	lw	$3,4($2)
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	lw	$2,20($2)
-	nop
-	srl	$4,$2,31
-	addu	$2,$4,$2
-	sra	$2,$2,1
-	addu	$2,$3,$2
-	slt	$2,$2,63
-	beq	$2,$0,$L43
-	nop
-
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	lw	$2,4($2)
-	nop
-	addiu	$3,$2,8
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	sw	$3,4($2)
-	b	$L47
-	nop
-
-$L43:
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	lw	$2,20($2)
-	nop
-	srl	$3,$2,31
-	addu	$2,$3,$2
-	sra	$2,$2,1
-	subu	$2,$0,$2
-	addiu	$3,$2,63
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	sw	$3,4($2)
-	b	$L47
-	nop
-
-$L42:
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	lw	$3,4($2)
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	lw	$2,20($2)
-	nop
-	srl	$4,$2,31
-	addu	$2,$4,$2
-	sra	$2,$2,1
-	addu	$2,$3,$2
-	blez	$2,$L46
-	nop
-
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	lw	$2,4($2)
-	nop
-	addiu	$3,$2,-8
-	lui	$2,%hi(player2)
-	addiu	$2,$2,%lo(player2)
-	sw	$3,4($2)
-	b	$L47
+	b	$L49
 	nop
 
 $L46:
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$3,4($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$2,24($2)
+	nop
+	subu	$3,$3,$2
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$2,20($2)
+	nop
+	srl	$4,$2,31
+	addu	$2,$4,$2
+	sra	$2,$2,1
+	subu	$2,$0,$2
+	addu	$2,$3,$2
+	blez	$2,$L50
+	nop
+
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$3,4($2)
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$2,24($2)
+	nop
+	subu	$3,$3,$2
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	sw	$3,4($2)
+	b	$L49
+	nop
+
+$L50:
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	lw	$2,20($2)
+	nop
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	move	$3,$2
+	lui	$2,%hi(player1)
+	addiu	$2,$2,%lo(player1)
+	sw	$3,4($2)
+$L49:
+	lw	$2,12($fp)
+	nop
+	beq	$2,$0,$L51
+	nop
+
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$3,4($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$2,24($2)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$2,20($2)
+	nop
+	srl	$4,$2,31
+	addu	$2,$4,$2
+	sra	$2,$2,1
+	addu	$2,$3,$2
+	slt	$2,$2,63
+	beq	$2,$0,$L52
+	nop
+
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$3,4($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$2,24($2)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	sw	$3,4($2)
+	b	$L56
+	nop
+
+$L52:
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$2,20($2)
+	nop
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	subu	$2,$0,$2
+	addiu	$3,$2,63
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	sw	$3,4($2)
+	b	$L56
+	nop
+
+$L51:
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$3,4($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$2,24($2)
+	nop
+	subu	$3,$3,$2
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$2,20($2)
+	nop
+	srl	$4,$2,31
+	addu	$2,$4,$2
+	sra	$2,$2,1
+	subu	$2,$0,$2
+	addu	$2,$3,$2
+	blez	$2,$L55
+	nop
+
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$3,4($2)
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	lw	$2,24($2)
+	nop
+	subu	$3,$3,$2
+	lui	$2,%hi(player2)
+	addiu	$2,$2,%lo(player2)
+	sw	$3,4($2)
+	b	$L56
+	nop
+
+$L55:
 	lui	$2,%hi(player2)
 	addiu	$2,$2,%lo(player2)
 	lw	$2,20($2)
@@ -1746,7 +2004,7 @@ $L46:
 	lui	$2,%hi(player2)
 	addiu	$2,$2,%lo(player2)
 	sw	$3,4($2)
-$L47:
+$L56:
 	nop
 	move	$sp,$fp
 	lw	$fp,20($sp)
@@ -1777,225 +2035,225 @@ update_ball_pos:
 	addiu	$2,$2,%lo(ball)
 	lw	$2,8($2)
 	nop
-	bne	$2,$0,$L49
-	nop
-
-	lui	$2,%hi(ball)
-	lw	$2,%lo(ball)($2)
-	nop
-	addiu	$3,$2,5
-	lui	$2,%hi(ball)
-	sw	$3,%lo(ball)($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,4($2)
-	nop
-	addiu	$3,$2,-5
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	sw	$3,4($2)
-	lui	$2,%hi(ball)
-	lw	$3,%lo(ball)($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,12($2)
-	nop
-	srl	$4,$2,31
-	addu	$2,$4,$2
-	sra	$2,$2,1
-	addu	$2,$3,$2
-	slt	$2,$2,64
-	bne	$2,$0,$L50
-	nop
-
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,12($2)
-	nop
-	srl	$3,$2,31
-	addu	$2,$3,$2
-	sra	$2,$2,1
-	subu	$2,$0,$2
-	addiu	$3,$2,63
-	lui	$2,%hi(ball)
-	sw	$3,%lo(ball)($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	li	$3,2			# 0x2
-	sw	$3,8($2)
-$L50:
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$3,4($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,12($2)
-	nop
-	srl	$4,$2,31
-	addu	$2,$4,$2
-	sra	$2,$2,1
-	subu	$2,$0,$2
-	addu	$2,$3,$2
-	bgez	$2,$L62
-	nop
-
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,12($2)
-	nop
-	srl	$3,$2,31
-	addu	$2,$3,$2
-	sra	$2,$2,1
-	move	$3,$2
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	sw	$3,4($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	li	$3,3			# 0x3
-	sw	$3,8($2)
-	b	$L62
-	nop
-
-$L49:
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$3,8($2)
-	li	$2,1			# 0x1
-	bne	$3,$2,$L53
-	nop
-
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,4($2)
-	nop
-	addiu	$3,$2,-5
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	sw	$3,4($2)
-	b	$L62
-	nop
-
-$L53:
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$3,8($2)
-	li	$2,2			# 0x2
-	bne	$3,$2,$L54
-	nop
-
-	lui	$2,%hi(ball)
-	lw	$2,%lo(ball)($2)
-	nop
-	addiu	$3,$2,-5
-	lui	$2,%hi(ball)
-	sw	$3,%lo(ball)($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,4($2)
-	nop
-	addiu	$3,$2,-5
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	sw	$3,4($2)
-	lui	$2,%hi(ball)
-	lw	$3,%lo(ball)($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,12($2)
-	nop
-	srl	$4,$2,31
-	addu	$2,$4,$2
-	sra	$2,$2,1
-	subu	$2,$0,$2
-	addu	$2,$3,$2
-	bgez	$2,$L55
-	nop
-
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,12($2)
-	nop
-	srl	$3,$2,31
-	addu	$2,$3,$2
-	sra	$2,$2,1
-	move	$3,$2
-	lui	$2,%hi(ball)
-	sw	$3,%lo(ball)($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	sw	$0,8($2)
-$L55:
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$3,4($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,12($2)
-	nop
-	srl	$4,$2,31
-	addu	$2,$4,$2
-	sra	$2,$2,1
-	subu	$2,$0,$2
-	addu	$2,$3,$2
-	bgez	$2,$L62
-	nop
-
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,12($2)
-	nop
-	srl	$3,$2,31
-	addu	$2,$3,$2
-	sra	$2,$2,1
-	move	$3,$2
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	sw	$3,4($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	li	$3,5			# 0x5
-	sw	$3,8($2)
-	b	$L62
-	nop
-
-$L54:
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$3,8($2)
-	li	$2,3			# 0x3
-	bne	$3,$2,$L57
-	nop
-
-	lui	$2,%hi(ball)
-	lw	$2,%lo(ball)($2)
-	nop
-	addiu	$3,$2,5
-	lui	$2,%hi(ball)
-	sw	$3,%lo(ball)($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,4($2)
-	nop
-	addiu	$3,$2,5
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	sw	$3,4($2)
-	lui	$2,%hi(ball)
-	lw	$3,%lo(ball)($2)
-	lui	$2,%hi(ball)
-	addiu	$2,$2,%lo(ball)
-	lw	$2,12($2)
-	nop
-	srl	$4,$2,31
-	addu	$2,$4,$2
-	sra	$2,$2,1
-	addu	$2,$3,$2
-	slt	$2,$2,64
 	bne	$2,$0,$L58
 	nop
 
 	lui	$2,%hi(ball)
+	lw	$2,%lo(ball)($2)
+	nop
+	addiu	$3,$2,5
+	lui	$2,%hi(ball)
+	sw	$3,%lo(ball)($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,4($2)
+	nop
+	addiu	$3,$2,-5
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	sw	$3,4($2)
+	lui	$2,%hi(ball)
+	lw	$3,%lo(ball)($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,12($2)
+	nop
+	srl	$4,$2,31
+	addu	$2,$4,$2
+	sra	$2,$2,1
+	addu	$2,$3,$2
+	slt	$2,$2,64
+	bne	$2,$0,$L59
+	nop
+
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,12($2)
+	nop
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	subu	$2,$0,$2
+	addiu	$3,$2,63
+	lui	$2,%hi(ball)
+	sw	$3,%lo(ball)($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	li	$3,2			# 0x2
+	sw	$3,8($2)
+$L59:
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$3,4($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,12($2)
+	nop
+	srl	$4,$2,31
+	addu	$2,$4,$2
+	sra	$2,$2,1
+	subu	$2,$0,$2
+	addu	$2,$3,$2
+	bgez	$2,$L71
+	nop
+
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,12($2)
+	nop
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	move	$3,$2
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	sw	$3,4($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	li	$3,3			# 0x3
+	sw	$3,8($2)
+	b	$L71
+	nop
+
+$L58:
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$3,8($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L62
+	nop
+
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,4($2)
+	nop
+	addiu	$3,$2,-5
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	sw	$3,4($2)
+	b	$L71
+	nop
+
+$L62:
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$3,8($2)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L63
+	nop
+
+	lui	$2,%hi(ball)
+	lw	$2,%lo(ball)($2)
+	nop
+	addiu	$3,$2,-5
+	lui	$2,%hi(ball)
+	sw	$3,%lo(ball)($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,4($2)
+	nop
+	addiu	$3,$2,-5
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	sw	$3,4($2)
+	lui	$2,%hi(ball)
+	lw	$3,%lo(ball)($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,12($2)
+	nop
+	srl	$4,$2,31
+	addu	$2,$4,$2
+	sra	$2,$2,1
+	subu	$2,$0,$2
+	addu	$2,$3,$2
+	bgez	$2,$L64
+	nop
+
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,12($2)
+	nop
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	move	$3,$2
+	lui	$2,%hi(ball)
+	sw	$3,%lo(ball)($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	sw	$0,8($2)
+$L64:
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$3,4($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,12($2)
+	nop
+	srl	$4,$2,31
+	addu	$2,$4,$2
+	sra	$2,$2,1
+	subu	$2,$0,$2
+	addu	$2,$3,$2
+	bgez	$2,$L71
+	nop
+
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,12($2)
+	nop
+	srl	$3,$2,31
+	addu	$2,$3,$2
+	sra	$2,$2,1
+	move	$3,$2
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	sw	$3,4($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	li	$3,5			# 0x5
+	sw	$3,8($2)
+	b	$L71
+	nop
+
+$L63:
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$3,8($2)
+	li	$2,3			# 0x3
+	bne	$3,$2,$L66
+	nop
+
+	lui	$2,%hi(ball)
+	lw	$2,%lo(ball)($2)
+	nop
+	addiu	$3,$2,5
+	lui	$2,%hi(ball)
+	sw	$3,%lo(ball)($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,4($2)
+	nop
+	addiu	$3,$2,5
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	sw	$3,4($2)
+	lui	$2,%hi(ball)
+	lw	$3,%lo(ball)($2)
+	lui	$2,%hi(ball)
+	addiu	$2,$2,%lo(ball)
+	lw	$2,12($2)
+	nop
+	srl	$4,$2,31
+	addu	$2,$4,$2
+	sra	$2,$2,1
+	addu	$2,$3,$2
+	slt	$2,$2,64
+	bne	$2,$0,$L67
+	nop
+
+	lui	$2,%hi(ball)
 	addiu	$2,$2,%lo(ball)
 	lw	$2,12($2)
 	nop
@@ -2010,7 +2268,7 @@ $L54:
 	addiu	$2,$2,%lo(ball)
 	li	$3,5			# 0x5
 	sw	$3,8($2)
-$L58:
+$L67:
 	lui	$2,%hi(ball)
 	addiu	$2,$2,%lo(ball)
 	lw	$3,4($2)
@@ -2023,7 +2281,7 @@ $L58:
 	sra	$2,$2,1
 	addu	$2,$3,$2
 	slt	$2,$2,96
-	bne	$2,$0,$L62
+	bne	$2,$0,$L71
 	nop
 
 	lui	$2,%hi(ball)
@@ -2041,15 +2299,15 @@ $L58:
 	lui	$2,%hi(ball)
 	addiu	$2,$2,%lo(ball)
 	sw	$0,8($2)
-	b	$L62
+	b	$L71
 	nop
 
-$L57:
+$L66:
 	lui	$2,%hi(ball)
 	addiu	$2,$2,%lo(ball)
 	lw	$3,8($2)
 	li	$2,4			# 0x4
-	bne	$3,$2,$L60
+	bne	$3,$2,$L69
 	nop
 
 	lui	$2,%hi(ball)
@@ -2060,15 +2318,15 @@ $L57:
 	lui	$2,%hi(ball)
 	addiu	$2,$2,%lo(ball)
 	sw	$3,4($2)
-	b	$L62
+	b	$L71
 	nop
 
-$L60:
+$L69:
 	lui	$2,%hi(ball)
 	addiu	$2,$2,%lo(ball)
 	lw	$3,8($2)
 	li	$2,5			# 0x5
-	bne	$3,$2,$L62
+	bne	$3,$2,$L71
 	nop
 
 	lui	$2,%hi(ball)
@@ -2096,7 +2354,7 @@ $L60:
 	sra	$2,$2,1
 	subu	$2,$0,$2
 	addu	$2,$3,$2
-	bgez	$2,$L61
+	bgez	$2,$L70
 	nop
 
 	lui	$2,%hi(ball)
@@ -2113,7 +2371,7 @@ $L60:
 	addiu	$2,$2,%lo(ball)
 	li	$3,3			# 0x3
 	sw	$3,8($2)
-$L61:
+$L70:
 	lui	$2,%hi(ball)
 	addiu	$2,$2,%lo(ball)
 	lw	$3,4($2)
@@ -2126,7 +2384,7 @@ $L61:
 	sra	$2,$2,1
 	addu	$2,$3,$2
 	slt	$2,$2,96
-	bne	$2,$0,$L62
+	bne	$2,$0,$L71
 	nop
 
 	lui	$2,%hi(ball)
@@ -2145,7 +2403,7 @@ $L61:
 	addiu	$2,$2,%lo(ball)
 	li	$3,2			# 0x2
 	sw	$3,8($2)
-$L62:
+$L71:
 	nop
 	move	$sp,$fp
 	lw	$fp,4($sp)
@@ -2313,20 +2571,20 @@ led_blink:
 	nop
 
 	sw	$0,16($fp)
-	b	$L71
+	b	$L80
 	nop
 
-$L72:
+$L81:
 	lw	$2,16($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,16($fp)
-$L71:
+$L80:
 	lw	$3,16($fp)
 	li	$2,262144			# 0x40000
 	ori	$2,$2,0x93e0
 	slt	$2,$3,$2
-	bne	$2,$0,$L72
+	bne	$2,$0,$L81
 	nop
 
 	move	$4,$0
@@ -2334,20 +2592,20 @@ $L71:
 	nop
 
 	sw	$0,20($fp)
-	b	$L73
+	b	$L82
 	nop
 
-$L74:
+$L83:
 	lw	$2,20($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,20($fp)
-$L73:
+$L82:
 	lw	$3,20($fp)
 	li	$2,262144			# 0x40000
 	ori	$2,$2,0x93e0
 	slt	$2,$3,$2
-	bne	$2,$0,$L74
+	bne	$2,$0,$L83
 	nop
 
 	li	$4,15			# 0xf
@@ -2355,20 +2613,20 @@ $L73:
 	nop
 
 	sw	$0,24($fp)
-	b	$L75
+	b	$L84
 	nop
 
-$L76:
+$L85:
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L75:
+$L84:
 	lw	$3,24($fp)
 	li	$2,262144			# 0x40000
 	ori	$2,$2,0x93e0
 	slt	$2,$3,$2
-	bne	$2,$0,$L76
+	bne	$2,$0,$L85
 	nop
 
 	move	$4,$0
@@ -2406,20 +2664,20 @@ lcd_wait:
 	move	$fp,$sp
 	sw	$4,16($fp)
 	sw	$0,0($fp)
-	b	$L78
+	b	$L87
 	nop
 
-$L79:
+$L88:
 	lw	$2,0($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,0($fp)
-$L78:
+$L87:
 	lw	$3,0($fp)
 	lw	$2,16($fp)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L79
+	bne	$2,$0,$L88
 	nop
 
 	nop
@@ -2712,15 +2970,15 @@ lcd_clear_vbuf:
 	sw	$fp,12($sp)
 	move	$fp,$sp
 	sw	$0,0($fp)
-	b	$L86
+	b	$L95
 	nop
 
-$L89:
+$L98:
 	sw	$0,4($fp)
-	b	$L87
+	b	$L96
 	nop
 
-$L88:
+$L97:
 	lui	$4,%hi(lcd_vbuf)
 	lw	$3,0($fp)
 	nop
@@ -2738,22 +2996,22 @@ $L88:
 	nop
 	addiu	$2,$2,1
 	sw	$2,4($fp)
-$L87:
+$L96:
 	lw	$2,4($fp)
 	nop
 	slt	$2,$2,96
-	bne	$2,$0,$L88
+	bne	$2,$0,$L97
 	nop
 
 	lw	$2,0($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,0($fp)
-$L86:
+$L95:
 	lw	$2,0($fp)
 	nop
 	slt	$2,$2,64
-	bne	$2,$0,$L89
+	bne	$2,$0,$L98
 	nop
 
 	nop
@@ -2784,15 +3042,15 @@ lcd_sync_vbuf:
 	sw	$fp,24($sp)
 	move	$fp,$sp
 	sw	$0,16($fp)
-	b	$L91
+	b	$L100
 	nop
 
-$L94:
+$L103:
 	sw	$0,20($fp)
-	b	$L92
+	b	$L101
 	nop
 
-$L93:
+$L102:
 	lui	$4,%hi(lcd_vbuf)
 	lw	$3,16($fp)
 	nop
@@ -2815,22 +3073,22 @@ $L93:
 	nop
 	addiu	$2,$2,1
 	sw	$2,20($fp)
-$L92:
+$L101:
 	lw	$2,20($fp)
 	nop
 	slt	$2,$2,96
-	bne	$2,$0,$L93
+	bne	$2,$0,$L102
 	nop
 
 	lw	$2,16($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,16($fp)
-$L91:
+$L100:
 	lw	$2,16($fp)
 	nop
 	slt	$2,$2,64
-	bne	$2,$0,$L94
+	bne	$2,$0,$L103
 	nop
 
 	nop
@@ -2865,15 +3123,15 @@ lcd_putc:
 	sw	$5,44($fp)
 	sw	$6,48($fp)
 	sw	$0,24($fp)
-	b	$L96
+	b	$L105
 	nop
 
-$L100:
+$L109:
 	sw	$0,28($fp)
-	b	$L97
+	b	$L106
 	nop
 
-$L99:
+$L108:
 	lw	$2,48($fp)
 	nop
 	addiu	$2,$2,-32
@@ -2891,7 +3149,7 @@ $L99:
 	nop
 	sra	$2,$3,$2
 	andi	$2,$2,0x1
-	beq	$2,$0,$L98
+	beq	$2,$0,$L107
 	nop
 
 	lw	$2,40($fp)
@@ -2913,27 +3171,27 @@ $L99:
 	jal	lcd_set_vbuf_pixel
 	nop
 
-$L98:
+$L107:
 	lw	$2,28($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,28($fp)
-$L97:
+$L106:
 	lw	$2,28($fp)
 	nop
 	slt	$2,$2,8
-	bne	$2,$0,$L99
+	bne	$2,$0,$L108
 	nop
 
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L96:
+$L105:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,8
-	bne	$2,$0,$L100
+	bne	$2,$0,$L109
 	nop
 
 	nop
@@ -2970,10 +3228,10 @@ lcd_puts:
 	lw	$2,36($fp)
 	nop
 	sw	$2,16($fp)
-	b	$L102
+	b	$L111
 	nop
 
-$L105:
+$L114:
 	lw	$2,16($fp)
 	lw	$3,40($fp)
 	nop
@@ -2981,7 +3239,7 @@ $L105:
 	lb	$2,0($2)
 	nop
 	slt	$2,$2,32
-	bne	$2,$0,$L106
+	bne	$2,$0,$L115
 	nop
 
 	lw	$2,16($fp)
@@ -3000,19 +3258,19 @@ $L105:
 	nop
 	addiu	$2,$2,1
 	sw	$2,16($fp)
-$L102:
+$L111:
 	lw	$2,16($fp)
 	nop
 	slt	$2,$2,12
-	bne	$2,$0,$L105
+	bne	$2,$0,$L114
 	nop
 
-	b	$L104
+	b	$L113
 	nop
 
-$L106:
+$L115:
 	nop
-$L104:
+$L113:
 	nop
 	move	$sp,$fp
 	lw	$31,28($sp)
