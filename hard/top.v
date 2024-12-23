@@ -16,10 +16,10 @@ module fpga_top (
 	input		[3:0]	btn,
 	output 	reg	[3:0]	led,
 	output		[7:0]	lcd,
-	input	reg	[7:0]	ioa, // 1P側コントローラー
+	input		[7:0]	ioa, // 1P側コントローラー
 	output		[7:0]	iob, // 7segLED 
 	output		[7:0]	ioc, // 7segLED
-	input   reg [7:0]	iod, // 2P側コントローラー
+	input       [7:0]	iod // 2P側コントローラー
 );
 wire	[31:0]	pc, instr, readdata, readdata0, readdata1, readdata2, readdata3,
 				writedata, dataadr;
@@ -85,6 +85,7 @@ rotary_enc rotary_enc2 (clk_62p5mhz, reset, iod, rte2);
 assign  readdata3 = {22'h0, rte2};
 
 /* cs6 */
+seg7led seg7led (clk_62p5mhz, reset, num, iob, ioc);
 always @ (posedge clk_62p5mhz or posedge reset)
 	if (reset)	num <= 0;
 	else if (cs6 && memwrite)  num <= writedata[6:0];
