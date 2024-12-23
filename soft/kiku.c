@@ -20,6 +20,24 @@ void lcd_clear_vbuf();
 #define PLAY    2
 #define ENDING  3
 
+struct ball {
+    int pos_x;
+    int pos_y;
+    int direction;
+};
+
+struct player {
+    int score;
+    int racket_y_center;
+    int rt_direction;
+    int racket_hit;
+    int racket_up;
+    int racket_size;
+};
+
+struct player player1, player2;
+struct ball ball;
+
 int state = INIT, pos = 0;
 
 /* interrupt_handler() is called every 100msec */
@@ -64,11 +82,11 @@ void main() {
 
 void play() {
     while (1) {
-        /* Button0 is pushed when the ball is in the left edge */
+        /* Button1 is pushed when the ball is in the left edge */
         if (pos == 0 && btn_check_0()) {
             led_blink();    /* Blink LEDs when hit */
         /* Button3 is pushed when the ball is in the right edge */
-        } else if (pos == 11 && btn_check_3()) {
+        } else if (pos == 12 && btn_check_3()) {
             led_blink();    /* Blink LEDs when hit */
         } else if (btn_check_1()) {
             led_blink();          /* Stop the game */
@@ -76,9 +94,34 @@ void play() {
     }
 }
 
+int is_hit() {
+    /*address of rte switch*/
+    volatile int *rte_ptr;
+    struct player p;
+    int swing;
+    if (ball.pos_x == 0) {
+        rte_ptr = (int *)0xff10;
+        p = player1;
+        swing = (*rte_ptr) & 0x1;
+    } else if (ball.pos_x == 95) {
+	    rte_ptr = (int *)0xff14;
+        p = player2;
+        swing = (*rte_ptr) & 0x1;
+    } else {
+        swing = 0;
+    }
+    
+    int racket_top = p.racket_y_center + p.racket_size/2; 
+    int racket_down = p.racket_y_center - p.racket_size/2;
+    if (swing && ball.pos_y >= racket_down && ball.pos_y <= racket_top)
+        return 1;
+    else
+        return 0;
+}
+
 void show_ball(int pos) {
     lcd_clear_vbuf();
-    lcd_putc(3, pos, 'o');
+    lcd_putc(3, pos, '*');
 }
 
 /*

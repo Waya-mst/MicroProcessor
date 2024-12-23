@@ -3,13 +3,13 @@
 # SW Build 4029153 on Fri Oct 13 20:13:54 MDT 2023
 # IP Build 4028589 on Sat Oct 14 00:45:43 MDT 2023
 # SharedData Build 4025554 on Tue Oct 10 17:18:54 MDT 2023
-# Start of session at: Mon Dec 23 11:34:55 2024
-# Process ID: 135474
-# Current directory: /home/md203/ub870149/workspace/MicroProcess/mips-20240724/hard
+# Start of session at: Mon Dec 23 15:16:07 2024
+# Process ID: 109579
+# Current directory: /home/md302/ub609782/micro/MicroProcessor/hard
 # Command line: vivado -mode batch -source script/program.tcl
-# Log file: /home/md203/ub870149/workspace/MicroProcess/mips-20240724/hard/vivado.log
-# Journal file: /home/md203/ub870149/workspace/MicroProcess/mips-20240724/hard/vivado.jou
-# Running On: y14c040.educ.cc.keio.ac.jp, OS: Linux, CPU Frequency: 2100.000 MHz, CPU Physical cores: 16, Host memory: 33126 MB
+# Log file: /home/md302/ub609782/micro/MicroProcessor/hard/vivado.log
+# Journal file: /home/md302/ub609782/micro/MicroProcessor/hard/vivado.jou
+# Running On: y14c039.educ.cc.keio.ac.jp, OS: Linux, CPU Frequency: 2100.000 MHz, CPU Physical cores: 16, Host memory: 33126 MB
 #-----------------------------------------------------------
 source script/program.tcl
 # open_hw_manager
@@ -37,7 +37,7 @@ INFO: [Labtools 27-2221] Launch Output:
 
 
 # open_hw_target
-INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Digilent/210279A79071A
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Digilent/210279778025A
 # set_property PROGRAM.FILE "fpga_top.bit" [lindex [get_hw_devices] 1]
 # current_hw_device [lindex [get_hw_devices] 1]
 # refresh_hw_device [lindex [get_hw_devices] 1]
@@ -46,7 +46,7 @@ INFO: [Labtools 27-1434] Device xc7z010 (JTAG device index = 1) is programmed wi
 INFO: [Labtoolstcl 44-647] No encryption options specified, beginning non-encryption programming...
 INFO: [Labtools 27-3164] End of startup status: HIGH
 # close_hw_target
-INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Digilent/210279A79071A
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Digilent/210279778025A
 # disconnect_hw_server
 # close_hw_manager
-INFO: [Common 17-206] Exiting Vivado at Mon Dec 23 11:35:22 2024...
+INFO: [Common 17-206] Exiting Vivado at Mon Dec 23 15:16:35 2024...

@@ -84,11 +84,11 @@ void main() {
 
 void play() {
     while (1) {
-        /* Button0 is pushed when the ball is in the left edge */
+        /* Button1 is pushed when the ball is in the left edge */
         if (pos == 0 && btn_check_0()) {
             led_blink();    /* Blink LEDs when hit */
         /* Button3 is pushed when the ball is in the right edge */
-        } else if (pos == 11 && btn_check_3()) {
+        } else if (pos == 12 && btn_check_3()) {
             led_blink();    /* Blink LEDs when hit */
         } else if (btn_check_1()) {
             led_blink();          /* Stop the game */
