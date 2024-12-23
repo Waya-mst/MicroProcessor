@@ -3,7 +3,7 @@
 #include "crt0.c"
 #include "ChrFont0.h"
 
-void show_ball(int pos);
+void show_ball();
 void play();
 int btn_check_0();
 int btn_check_1();
@@ -14,31 +14,48 @@ void lcd_init();
 void lcd_putc(int y, int x, int c);
 void lcd_sync_vbuf();
 void lcd_clear_vbuf();
+void update_window();
+int is_hit();
+void update_racket_pos();
+void update_ball_pos();
+void lcd_set_vbuf_pixel(int, int, int, int, int);
 
 #define INIT    0
 #define OPENING 1
 #define PLAY    2
 #define ENDING  3
 
+struct ball {
+    int pos_x;
+    int pos_y;
+    int direction;
+    int ball_size; /* 奇数でハードコーディング */
+};
+
+struct player {
+    int score;
+    int racket_y_center;
+    int rt_direction;
+    int racket_hit;
+    int racket_up;
+    int racket_size;
+};
+
+struct player player1, player2;
+struct ball ball;
+
 int state = INIT, pos = 0;
 
 /* interrupt_handler() is called every 100msec */
 // 画面の描画を行う(100msごとに呼ばれるので10fps)
 void interrupt_handler() {
-    static int cnt;
-
     if (state == INIT) {
         // Do nothing
     } else if (state == OPENING) {
-        cnt = 0;
     } else if (state == PLAY) {
         /* Display a ball */
-        pos = (cnt < 12) ? cnt : 23 - cnt;
-        show_ball(pos);
-
-        if (++cnt >= 24) {
-            cnt = 0;
-        }
+        update_ball_pos();
+        update_window();
     } else if (state == ENDING) {
         // Do nothing
     }
@@ -49,13 +66,15 @@ void interrupt_handler() {
 void main() {
     while (1) {
         if (state == INIT) {
+            ball.pos_x = 48;
+            ball.pos_y = 48;
+            ball.direction = 3;
+            ball.ball_size = 5;
             lcd_init();
             state = OPENING; 
         } else if (state == OPENING) {
             state = PLAY;
         } else if (state == PLAY) {
-            play();
-            state = ENDING;
         } else if (state == ENDING) {
             state = OPENING;
         }
@@ -64,11 +83,11 @@ void main() {
 
 void play() {
     while (1) {
-        /* Button0 is pushed when the ball is in the left edge */
+        /* Button1 is pushed when the ball is in the left edge */
         if (pos == 0 && btn_check_0()) {
             led_blink();    /* Blink LEDs when hit */
         /* Button3 is pushed when the ball is in the right edge */
-        } else if (pos == 11 && btn_check_3()) {
+        } else if (pos == 12 && btn_check_3()) {
             led_blink();    /* Blink LEDs when hit */
         } else if (btn_check_1()) {
             led_blink();          /* Stop the game */
@@ -76,9 +95,137 @@ void play() {
     }
 }
 
+int is_hit() {
+    /*address of rte switch*/
+    volatile int *rte_ptr;
+    struct player p;
+    int swing;
+    if (ball.pos_x - ball.ball_size / 2 == 0) {
+        rte_ptr = (int *)0xff10;
+        p = player1;
+        swing = (*rte_ptr) & 0x1;
+    } else if (ball.pos_x + ball.ball_size / 2 == 95) {
+	    rte_ptr = (int *)0xff14;
+        p = player2;
+        swing = (*rte_ptr) & 0x1;
+    } else {
+        swing = 0;
+    }
+    
+    int racket_top = p.racket_y_center + p.racket_size/2; 
+    int racket_down = p.racket_y_center - p.racket_size/2;
+    if (swing && ball.pos_y >= racket_down && ball.pos_y <= racket_top)
+        return 1;
+    else
+        return 0;
+}
+/*
 void show_ball(int pos) {
     lcd_clear_vbuf();
-    lcd_putc(3, pos, 'o');
+    lcd_putc(3, pos, '*');
+}
+*/
+void update_window() {
+    show_ball();
+}
+
+void show_ball() {
+    lcd_clear_vbuf();
+    for (int i = -ball.ball_size / 2; i <= ball.ball_size / 2; i++) {
+        for (int j = -ball.ball_size / 2; j <= ball.ball_size / 2; j++) {
+            lcd_set_vbuf_pixel(ball.pos_x + i, ball.pos_y + j, 0, 255, 0);
+        }
+    }
+}
+
+/* up and down */
+void update_racket_pos() {
+    volatile int *rte_ptr1 = (int *)0xff10;
+    volatile int *rte_ptr2 = (int *)0xff14;
+
+    int is_down1 = (*rte_ptr1) & 0x2;
+    int is_down2 = (*rte_ptr1) & 0x2;
+    is_down1 >>= 1;
+    is_down2 >>= 1;
+
+    if (is_down1) {
+        if (player1.racket_y_center + player1.racket_size / 2 < 63) {
+            player1.racket_y_center += 8;
+        } else {
+            player1.racket_y_center = 63 - player1.racket_size / 2;
+        }
+    } else {
+        if (player1.racket_y_center + player1.racket_size / 2 > 0) {
+            player1.racket_y_center -= 8;
+        } else {
+            player1.racket_y_center = player1.racket_size / 2;
+        }
+    }
+    if (is_down2) {
+        if (player2.racket_y_center + player2.racket_size / 2 < 63) {
+            player2.racket_y_center += 8;
+        } else {
+            player2.racket_y_center = 63 - player2.racket_size / 2;
+        }
+    } else {
+        if (player2.racket_y_center + player2.racket_size / 2 > 0) {
+            player2.racket_y_center -= 8;
+        } else {
+            player2.racket_y_center = player2.racket_size / 2;
+        }
+    }
+}
+
+void update_ball_pos(){
+    if(ball.direction == 0){
+        ball.pos_x += 5;
+        ball.pos_y -= 5;
+        if(ball.pos_x + ball.ball_size / 2 > 63){
+            ball.pos_x = 63 - ball.ball_size / 2;
+            ball.direction = 2;
+        }
+        if(ball.pos_y - ball.ball_size / 2 < 0){
+            ball.pos_y = ball.ball_size / 2;
+            ball.direction = 3;
+        }
+    }else if(ball.direction == 1){
+        ball.pos_y -= 5;
+    }else if(ball.direction == 2){
+        ball.pos_x -= 5;
+        ball.pos_y -= 5;
+        if(ball.pos_x - ball.ball_size / 2 < 0){
+            ball.pos_x = ball.ball_size / 2;
+            ball.direction = 0;
+        }
+        if(ball.pos_y - ball.ball_size / 2 < 0){
+            ball.pos_y = ball.ball_size / 2;
+            ball.direction = 5;
+        }
+    }else if(ball.direction == 3){
+        ball.pos_x += 5;
+        ball.pos_y += 5;
+        if(ball.pos_x + ball.ball_size / 2 > 63){
+            ball.pos_x = 63 - ball.ball_size / 2;
+            ball.direction = 5;
+        }
+        if(ball.pos_y + ball.ball_size / 2 > 95){
+            ball.pos_y = 95 - ball.ball_size/ 2;
+            ball.direction = 0;
+        }
+    }else if(ball.direction == 4){
+        ball.pos_y += 5;
+    }else if(ball.direction == 5){
+        ball.pos_x -= 5;
+        ball.pos_y += 5;
+        if(ball.pos_x - ball.ball_size / 2 < 0){
+            ball.pos_x = ball.ball_size / 2;
+            ball.direction = 3;
+        }
+        if(ball.pos_y + ball.ball_size / 2 > 95){
+            ball.pos_y = 95 - ball.ball_size/ 2;
+            ball.direction = 2;
+        }
+    }
 }
 
 /*
