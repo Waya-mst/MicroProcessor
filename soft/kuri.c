@@ -96,6 +96,31 @@ void play() {
     }
 }
 
+int is_hit() {
+    /*address of rte switch*/
+    volatile int *rte_ptr;
+    struct player p;
+    int swing;
+    if (ball.pos_x == 0) {
+        rte_ptr = (int *)0xff10;
+        p = player1;
+        swing = (*rte_ptr) & 0x1;
+    } else if (ball.pos_x == 95) {
+	    rte_ptr = (int *)0xff14;
+        p = player2;
+        swing = (*rte_ptr) & 0x1;
+    } else {
+        swing = 0;
+    }
+    
+    int racket_top = p.racket_y_center + p.racket_size/2; 
+    int racket_down = p.racket_y_center - p.racket_size/2;
+    if (swing && ball.pos_y >= racket_down && ball.pos_y <= racket_top)
+        return 1;
+    else
+        return 0;
+}
+
 void show_ball(int pos) {
     lcd_clear_vbuf();
     lcd_putc(3, pos, '*');
@@ -140,6 +165,38 @@ void update_racket_pos() {
             player2.racket_y_center -= 8;
         } else {
             player2.racket_y_center = player2.racket_size / 2;
+        }
+    }
+}
+
+void update_ball_pos(){
+    if(ball.direction == 0){
+        ball.pos_x++;
+        ball.pos_y++;
+        if(ball.pos_x == 63){
+            ball.direction = 2;
+        }
+    }else if(ball.direction == 1){
+        ball.pos_x++;
+    }else if(ball.direction == 2){
+        ball.pos_x++;
+        ball.pos_y--;
+        if(ball.pos_x == 0){
+            ball.direction = 1;
+        }
+    }else if(ball.direction == 3){
+        ball.pos_x--;
+        ball.pos_y++;
+        if(ball.pos_x == 63){
+            ball.direction = 1;
+        }
+    }else if(ball.direction == 4){
+        ball.pos_x--;
+    }else if(ball.direction == 5){
+        ball.pos_x--;
+        ball.pos_y--;
+        if(ball.pos_x == 0){
+            ball.direction = 3;
         }
     }
 }
