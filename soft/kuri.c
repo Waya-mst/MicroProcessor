@@ -24,6 +24,7 @@ struct ball {
     int pos_x;
     int pos_y;
     int direction;
+    int ball_size;
 };
 
 struct player {
@@ -34,6 +35,9 @@ struct player {
     int racket_up;
     int racket_size;
 };
+
+struct player player1, player2;
+struct ball ball;
 
 int state = INIT, pos = 0;
 
@@ -49,6 +53,7 @@ void interrupt_handler() {
     } else if (state == PLAY) {
         /* Display a ball */
         pos = (cnt < 12) ? cnt : 23 - cnt;
+        update_racket_pos();
         show_ball(pos);
 
         if (++cnt >= 24) {
@@ -94,6 +99,49 @@ void play() {
 void show_ball(int pos) {
     lcd_clear_vbuf();
     lcd_putc(3, pos, '*');
+}
+
+void update_window(int ball_pos) {
+    int p1_racket_pos = player1.racket_y_center;
+    int p2_racket_pos = player2.racket_y_center;
+}
+
+/* up and down */
+void update_racket_pos() {
+    volatile int *rte_ptr1 = (int *)0xff10;
+    volatile int *rte_ptr2 = (int *)0xff14;
+
+    int is_down1 = (*rte_ptr1) & 0x2;
+    int is_down2 = (*rte_ptr1) & 0x2;
+    is_down1 >>= 1;
+    is_down2 >>= 1;
+
+    if (is_down1) {
+        if (player1.racket_y_center + player1.racket_size / 2 < 63) {
+            player1.racket_y_center += 8;
+        } else {
+            player1.racket_y_center = 63 - player1.racket_size / 2;
+        }
+    } else {
+        if (player1.racket_y_center + player1.racket_size / 2 > 0) {
+            player1.racket_y_center -= 8;
+        } else {
+            player1.racket_y_center = player1.racket_size / 2;
+        }
+    }
+    if (is_down2) {
+        if (player2.racket_y_center + player2.racket_size / 2 < 63) {
+            player2.racket_y_center += 8;
+        } else {
+            player2.racket_y_center = 63 - player2.racket_size / 2;
+        }
+    } else {
+        if (player2.racket_y_center + player2.racket_size / 2 > 0) {
+            player2.racket_y_center -= 8;
+        } else {
+            player2.racket_y_center = player2.racket_size / 2;
+        }
+    }
 }
 
 /*
