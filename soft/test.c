@@ -92,6 +92,11 @@ void main() {
         } else if (state == OPENING) {
             state = PLAY;
         } else if (state == PLAY) {
+            volatile int *led_ptr = (int *)0xff08;
+            volatile int *rte_ptr = (int *)0xff10;
+            int isPush = (*rte_ptr) & 0x1;
+            //rotate_value >>= 2;
+            *led_ptr = isPush;
         } else if (state == ENDING) {
             state = OPENING;
         }
@@ -112,27 +117,39 @@ void play() {
     }
 }
 
-int is_hit() {
+int is_hit1() {
     /*address of rte switch*/
-    volatile int *rte_ptr;
+    volatile int *rte_ptr = (int *)0xff10;
     struct player p;
-    int swing;
-    if (ball.pos_x - ball.ball_size / 2 == 0) {
-        rte_ptr = (int *)0xff10;
-        p = player1;
-        swing = (*rte_ptr) & 0x1;
-    } else if (ball.pos_x + ball.ball_size / 2 == 95) {
-	    rte_ptr = (int *)0xff14;
-        p = player2;
-        swing = (*rte_ptr) & 0x1;
-    } else {
-        swing = 0;
-    }
+
+    int rotate_value = (*rte_ptr);
+    rotate_value >>= 2;
+
+    int is_push = (*rte_ptr) & 0x1;
     
-    int racket_top = p.racket_x_center + p.racket_size/2; 
-    int racket_down = p.racket_x_center - p.racket_size/2;
-    if (swing && ball.pos_y >= racket_down && ball.pos_y <= racket_top)
-        return 1;
+
+    if (is_push
+        && player1.racket_x_center - player1.racket_size / 2 - ball.ball_size / 2 <= ball.pos_x
+        && ball.pos_x <= player1.racket_x_center + player1.racket_size / 2 + ball.ball_size / 2) {
+        
+    }
+    else
+        return 0;
+}
+
+int is_hit2() {
+    /*address of rte switch*/
+    //volatile int *rte_ptr;
+    struct player p;
+    int is_push;
+
+    volatile int *rte_ptr = (int *)0xff14;
+    is_push = (*rte_ptr) & 0x1;
+
+    if (is_push
+        && player2.racket_x_center - player2.racket_size / 2 - ball.ball_size / 2 <= ball.pos_x
+        && ball.pos_x <= player2.racket_x_center + player2.racket_size / 2 + ball.ball_size / 2)
+            return 1;
     else
         return 0;
 }
@@ -219,7 +236,6 @@ void update_ball_pos(){
         }
         if(ball.pos_y - ball.ball_size / 2 < 0){
             ball.pos_y = ball.ball_size / 2;
-            ball.direction = 3;
         }
     }else if(ball.direction == 1){
         ball.pos_y -= 5;
@@ -232,7 +248,6 @@ void update_ball_pos(){
         }
         if(ball.pos_y - ball.ball_size / 2 < 0){
             ball.pos_y = ball.ball_size / 2;
-            ball.direction = 5;
         }
     }else if(ball.direction == 3){
         ball.pos_x += 5;
@@ -243,7 +258,6 @@ void update_ball_pos(){
         }
         if(ball.pos_y + ball.ball_size / 2 > 95){
             ball.pos_y = 95 - ball.ball_size/ 2;
-            ball.direction = 0;
         }
     }else if(ball.direction == 4){
         ball.pos_y += 5;
@@ -256,7 +270,6 @@ void update_ball_pos(){
         }
         if(ball.pos_y + ball.ball_size / 2 > 95){
             ball.pos_y = 95 - ball.ball_size/ 2;
-            ball.direction = 2;
         }
     }
 }
