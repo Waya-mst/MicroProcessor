@@ -3,12 +3,11 @@
 # SW Build 4029153 on Fri Oct 13 20:13:54 MDT 2023
 # IP Build 4028589 on Sat Oct 14 00:45:43 MDT 2023
 # SharedData Build 4025554 on Tue Oct 10 17:18:54 MDT 2023
-# Start of session at: Thu Dec 26 12:05:29 2024
-# Process ID: 112251
+# Start of session at: Thu Dec 26 13:26:05 2024
+# Process ID: 116359
 # Current directory: /home/md203/ub870149/workspace/MicroProcess/mips-20240724/hard
-# Command line: vivado -mode batch -source script/program.tcl
+# Command line: vivado -mode batch -source script/bitgen.tcl
 # Log file: /home/md203/ub870149/workspace/MicroProcess/mips-20240724/hard/vivado.log
 # Journal file: /home/md203/ub870149/workspace/MicroProcess/mips-20240724/hard/vivado.jou
 # Running On: y14e001.educ.cc.keio.ac.jp, OS: Linux, CPU Frequency: 2100.000 MHz, CPU Physical cores: 16, Host memory: 33125 MB
 #-----------------------------------------------------------
-source script/program.tcl

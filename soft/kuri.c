@@ -2,7 +2,6 @@
 
 #include "crt0.c"
 #include "ChrFont0.h"
-#include <stdlib.h>
 
 void show_ball();
 void play();
@@ -110,15 +109,12 @@ void game_init() {
 }
 
 void pos_init(int player) {
-    int min, max;
     if (player == 1) {
         ball.pos_y = 89;
-        min = 0, max = 2;
-        ball.direction = min + rand() % (max - min + 1);
+        ball.direction = 0;
     } else if (player == 2) {
         ball.pos_y = 6;
-        min = 3, max = 5;
-        ball.direction = min + rand() % (max - min + 1);
+        ball.direction = 3;
     }
     ball.pos_x = 32;
     player1.racket_x_center = 32;
