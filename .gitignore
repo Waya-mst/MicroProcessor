@@ -11,19 +11,3 @@ hard/*.log
 hard/*.xpr
 hard/*.wdf
 
-
-hard/clockInfo.txt
-hard/fpga_top.bit
-hard/test1.cache/wt/synthesis.wdf
-hard/test1.srcs/sources_1/imports/program.dat
-hard/test1.xpr
-hard/vivado.jou
-hard/vivado.log
-soft/kuri.c
-soft/program.asm
-soft/program.bin
-soft/program.dat
-soft/program.dump
-soft/program.o
-soft/program_bin_removed.o
-soft/program_edit.o 
