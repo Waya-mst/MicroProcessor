@@ -1,12 +1,12 @@
-soft/*.asm
-soft/*.bin
-soft/*.dat
-soft/*.dump
-soft/*.o
+./soft/*.asm
+./soft/*.bin
+./soft/*.dat
+./soft/*.dump
+./soft/*.o
 
-hard/*.xdc
-hard/*.bit
-hard/*.hdf
-hard/*.log
-hard/*.xpr
-hard/*.wdf
+./hard/*.xdc
+./hard/*.bit
+./hard/*.hdf
+./hard/*.log
+./hard/*.xpr
+./hard/*.wdf
