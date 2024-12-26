@@ -23,6 +23,7 @@ void lcd_set_vbuf_pixel(int, int, int, int, int);
 void show_racket();
 void game_init();
 void pos_init(int);
+void show_point();
 
 #define INIT    0
 #define OPENING 1
@@ -245,6 +246,11 @@ void show_racket() {
             lcd_set_vbuf_pixel(player2.racket_x_center + i, 5 + j, 0, 255, 0);
         }
     }
+}
+
+void show_point() {
+    volatile int *seg7_ptr = (int *)0xff18;
+    *seg7_ptr = player1.score * 10 + player2.score;
 }
 
 /* up and down */
