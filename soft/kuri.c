@@ -2,6 +2,7 @@
 
 #include "crt0.c"
 #include "ChrFont0.h"
+#include <stdlib.h>
 
 void show_ball();
 void play();
@@ -20,6 +21,8 @@ void update_racket_pos();
 void update_ball_pos();
 void lcd_set_vbuf_pixel(int, int, int, int, int);
 void show_racket();
+void game_init();
+void pos_init(int);
 
 #define INIT    0
 #define OPENING 1
@@ -69,50 +72,84 @@ void interrupt_handler() {
 void main() {
     while (1) {
         if (state == INIT) {
-            ball.pos_x = 48;
-            ball.pos_y = 48;
-            ball.direction = 3;
-            ball.ball_size = 5;
-            player1.score = 0;
-            player1.racket_x_center = 32;
-            player1.rt_direction = 0;
-            player1.racket_hit = 0;
-            player1.racket_up = 1;
-            player1.racket_size = 9; /* 奇数 */
-            player1.racket_speed = 8;
-            player2.score = 0;
-            player2.racket_x_center = 32;
-            player2.rt_direction = 3;
-            player2.racket_hit = 0;
-            player2.racket_up = 1;
-            player2.racket_size = 9; /* 奇数 */
-            player2.racket_speed = 8;
+            game_init();
             lcd_init();
             state = OPENING; 
         } else if (state == OPENING) {
             state = PLAY;
         } else if (state == PLAY) {
-            // volatile int *led_ptr = (int *)0xff08;
-            // volatile int *rte_ptr = (int *)0xff10;
-            // int isPush = (*rte_ptr) & 0x1;
-            //rotate_value >>= 2;
-            //*led_ptr = isPush;
+            play();
         } else if (state == ENDING) {
-            state = OPENING;
+            state = INIT;
         }
     }
 }
 
+/* 栗原 */
+void game_init() {
+    ball.pos_x = 48;
+    ball.pos_y = 48;
+    ball.direction = 3;
+    ball.ball_size = 5;
+    player1.score = 5;
+    player1.racket_x_center = 32;
+    player1.rt_direction = 0;
+    player1.racket_hit = 0;
+    player1.racket_up = 1;
+    player1.racket_size = 9; /* 奇数 */
+    player1.racket_speed = 8;
+    player2.score = 5;
+    player2.racket_x_center = 32;
+    player2.rt_direction = 3;
+    player2.racket_hit = 0;
+    player2.racket_up = 1;
+    player2.racket_size = 9; /* 奇数 */
+    player2.racket_speed = 8;
+}
+
+void pos_init(int player) {
+    int min, max;
+    if (player == 1) {
+        ball.pos_y = 89;
+        min = 0, max = 2;
+        ball.direction = min + rand() % (max - min + 1);
+    } else if (player == 2) {
+        ball.pos_y = 6;
+        min = 3, max = 5;
+        ball.direction = min + rand() % (max - min + 1);
+    }
+    ball.pos_x = 32;
+    player1.racket_x_center = 32;
+    player2.racket_x_center = 32;
+} 
+
+/* 栗原 */
 void play() {
     while (1) {
-        /* Button1 is pushed when the ball is in the left edge */
-        if (pos == 0 && btn_check_0()) {
-            led_blink();    /* Blink LEDs when hit */
-        /* Button3 is pushed when the ball is in the right edge */
-        } else if (pos == 12 && btn_check_3()) {
-            led_blink();    /* Blink LEDs when hit */
-        } else if (btn_check_1()) {
-            led_blink();          /* Stop the game */
+        /* ここからヒロム */
+        /* 
+         * 最初にballのy座標で条件分岐
+         　次にis_hitで条件分岐
+         　if (ball.y == 90) { if !(is_hit1()) { 2の点数をincrement }  }
+           else if (ball.y == 5) { if !(is_hit2()) { 1の点数をincrement } }
+         */
+
+        if (ball.pos_y == 90 && !(is_hit1())) {
+            player2.score--;
+            if (player2.score <= 0) {
+                /* ゲーム終了の処理 */
+                return;
+            }
+            /* player1からサーブすることにする。 */
+            pos_init(1);
+        } else if (ball.pos_y == 5) {
+            player1.score--;
+            if (player1.score <= 0) {
+                /* ゲーム終了の処理 */
+                return;
+            }
+            /* player2空サーブすることにする。 */
+            pos_init(2);
         }
     }
 }
