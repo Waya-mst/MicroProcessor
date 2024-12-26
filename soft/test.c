@@ -19,6 +19,7 @@ int is_hit();
 void update_racket_pos();
 void update_ball_pos();
 void lcd_set_vbuf_pixel(int, int, int, int, int);
+void show_racket();
 
 #define INIT    0
 #define OPENING 1
@@ -34,11 +35,12 @@ struct ball {
 
 struct player {
     int score;
-    int racket_y_center;
+    int racket_x_center;
     int rt_direction;
     int racket_hit;
     int racket_up;
     int racket_size;
+    int racket_speed;
 };
 
 struct player player1, player2;
@@ -55,6 +57,7 @@ void interrupt_handler() {
     } else if (state == PLAY) {
         /* Display a ball */
         update_ball_pos();
+        update_racket_pos();
         update_window();
     } else if (state == ENDING) {
         // Do nothing
@@ -70,6 +73,20 @@ void main() {
             ball.pos_y = 48;
             ball.direction = 3;
             ball.ball_size = 5;
+            player1.score = 0;
+            player1.racket_x_center = 32;
+            player1.rt_direction = 0;
+            player1.racket_hit = 0;
+            player1.racket_up = 1;
+            player1.racket_size = 9; /* 奇数 */
+            player1.racket_speed = 8;
+            player2.score = 0;
+            player2.racket_x_center = 32;
+            player2.rt_direction = 3;
+            player2.racket_hit = 0;
+            player2.racket_up = 1;
+            player2.racket_size = 9; /* 奇数 */
+            player2.racket_speed = 8;
             lcd_init();
             state = OPENING; 
         } else if (state == OPENING) {
@@ -112,8 +129,8 @@ int is_hit() {
         swing = 0;
     }
     
-    int racket_top = p.racket_y_center + p.racket_size/2; 
-    int racket_down = p.racket_y_center - p.racket_size/2;
+    int racket_top = p.racket_x_center + p.racket_size/2; 
+    int racket_down = p.racket_x_center - p.racket_size/2;
     if (swing && ball.pos_y >= racket_down && ball.pos_y <= racket_top)
         return 1;
     else
@@ -126,14 +143,29 @@ void show_ball(int pos) {
 }
 */
 void update_window() {
+    lcd_clear_vbuf();
     show_ball();
+    show_racket();
 }
 
 void show_ball() {
-    lcd_clear_vbuf();
     for (int i = -ball.ball_size / 2; i <= ball.ball_size / 2; i++) {
         for (int j = -ball.ball_size / 2; j <= ball.ball_size / 2; j++) {
             lcd_set_vbuf_pixel(ball.pos_x + i, ball.pos_y + j, 0, 255, 0);
+        }
+    }
+}
+
+void show_racket() {
+    for (int i = -player1.racket_size / 2; i <= player1.racket_size / 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            lcd_set_vbuf_pixel(player1.racket_x_center + i, 90 + j, 0, 255, 0);
+        }
+    }
+
+    for (int i = -player2.racket_size / 2; i <= player2.racket_size / 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            lcd_set_vbuf_pixel(player2.racket_x_center + i, 5 + j, 0, 255, 0);
         }
     }
 }
@@ -144,34 +176,35 @@ void update_racket_pos() {
     volatile int *rte_ptr2 = (int *)0xff14;
 
     int is_down1 = (*rte_ptr1) & 0x2;
-    int is_down2 = (*rte_ptr1) & 0x2;
+    int is_down2 = (*rte_ptr2) & 0x2;
     is_down1 >>= 1;
+    is_down1 = !(is_down1);
     is_down2 >>= 1;
 
     if (is_down1) {
-        if (player1.racket_y_center + player1.racket_size / 2 < 63) {
-            player1.racket_y_center += 8;
+        if (player1.racket_x_center + player1.racket_speed + player1.racket_size / 2 < 63) {
+            player1.racket_x_center += player1.racket_speed;
         } else {
-            player1.racket_y_center = 63 - player1.racket_size / 2;
+            player1.racket_x_center = 63 - player1.racket_size / 2;
         }
     } else {
-        if (player1.racket_y_center + player1.racket_size / 2 > 0) {
-            player1.racket_y_center -= 8;
+        if (player1.racket_x_center - player1.racket_speed - player1.racket_size / 2 > 0) {
+            player1.racket_x_center -= player1.racket_speed;
         } else {
-            player1.racket_y_center = player1.racket_size / 2;
+            player1.racket_x_center = player1.racket_size / 2;
         }
     }
     if (is_down2) {
-        if (player2.racket_y_center + player2.racket_size / 2 < 63) {
-            player2.racket_y_center += 8;
+        if (player2.racket_x_center + player2.racket_speed + player2.racket_size / 2 < 63) {
+            player2.racket_x_center += player2.racket_speed;
         } else {
-            player2.racket_y_center = 63 - player2.racket_size / 2;
+            player2.racket_x_center = 63 - player2.racket_size / 2;
         }
     } else {
-        if (player2.racket_y_center + player2.racket_size / 2 > 0) {
-            player2.racket_y_center -= 8;
+        if (player2.racket_x_center - player2.racket_speed - player2.racket_size / 2 > 0) {
+            player2.racket_x_center -= player2.racket_speed;
         } else {
-            player2.racket_y_center = player2.racket_size / 2;
+            player2.racket_x_center = player2.racket_size / 2;
         }
     }
 }
