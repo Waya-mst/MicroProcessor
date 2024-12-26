@@ -127,7 +127,7 @@ int is_hit1() {
     if (is_push
         && player1.racket_x_center - player1.racket_size / 2 - ball.ball_size / 2 <= ball.pos_x
         && ball.pos_x <= player1.racket_x_center + player1.racket_size / 2 + ball.ball_size / 2) {
-            ball.direction
+            ball.direction;
     }
     else
         return 0;
